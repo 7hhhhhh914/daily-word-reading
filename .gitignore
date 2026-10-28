@@ -1,0 +1,16 @@
+# 密钥
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 运行时数据
+app/data/
+*.db
+*.sqlite3
+
+# 上传的截图
+app/data/uploads/

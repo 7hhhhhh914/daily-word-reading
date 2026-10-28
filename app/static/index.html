@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>每日单词阅读</title>
+  <link rel="stylesheet" href="/static/css/style.css?v=5">
+</head>
+<body>
+  <header class="topbar">
+    <button id="backBtn" class="icon-btn hidden" aria-label="返回">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+    </button>
+    <h1 id="pageTitle">每日单词阅读</h1>
+    <button id="homeBtn" class="home-btn hidden" aria-label="首页">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+      <span>首页</span>
+    </button>
+    <button id="themeToggle" class="icon-btn" aria-label="切换主题"></button>
+  </header>
+
+  <!-- 步骤指示（4 页向导用） -->
+  <div id="stepsBar" class="steps hidden">
+    <div class="step" data-step="0"><span class="dot">1</span>上传截图</div>
+    <span class="step-line"></span>
+    <div class="step" data-step="1"><span class="dot">2</span>确认单词</div>
+    <span class="step-line"></span>
+    <div class="step" data-step="2"><span class="dot">3</span>文章要求</div>
+    <span class="step-line"></span>
+    <div class="step" data-step="3"><span class="dot">4</span>阅读文章</div>
+  </div>
+
+  <main class="container">
+    <!-- 首页 -->
+    <section id="view-home" class="view">
+      <p class="subtitle">在真实语境里记住今天的新词</p>
+      <div class="cards">
+        <button class="card" data-view="upload">
+          <span class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+          <span class="card-body"><span class="card-title">生成文章</span><span class="card-desc">截图识别单词 → 生成感兴趣话题的文章</span></span>
+        </button>
+        <button class="card" data-view="news">
+          <span class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"/></svg></span>
+          <span class="card-body"><span class="card-title">单词语境查询</span><span class="card-desc">查单词在真实英文新闻里的用法</span></span>
+        </button>
+        <button class="card" data-view="review">
+          <span class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+          <span class="card-body"><span class="card-title">错题本</span><span class="card-desc">不认识的词，集中复习</span></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 页面1：上传截图 -->
+    <section id="view-upload" class="view hidden">
+      <label class="drop-zone" id="dropZone">
+        <span class="dz-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
+        <span>点击选择 / 拖拽「不背单词」截图，可一次多张</span>
+        <span style="font-size:12px">支持 jpg / png / webp，手机端相册多选</span>
+        <input id="shotInput" type="file" accept="image/jpeg,image/png,image/webp" multiple class="file-input">
+      </label>
+      <div id="thumbList" class="thumb-list"></div>
+      <div id="uploadStatus" class="status hidden"></div>
+      <div class="fixed-bottom">
+        <button id="recognizeBtn" class="btn btn-primary btn-block" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          开始识别
+        </button>
+      </div>
+    </section>
+
+    <!-- 页面2：确认单词 -->
+    <section id="view-confirm" class="view hidden">
+      <div id="confirmWords" class="cards"></div>
+      <button id="addWordBtn" class="btn btn-outline btn-block" style="margin-top:12px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        手动新增单词
+      </button>
+      <div id="confirmStatus" class="status hidden"></div>
+      <div class="fixed-bottom">
+        <button id="confirmNext" class="btn btn-primary btn-block">下一步：文章要求</button>
+      </div>
+    </section>
+
+    <!-- 页面3：文章要求 -->
+    <section id="view-setup" class="view hidden">
+      <div id="setupWords" class="words-preview"></div>
+      <div class="panel">
+        <label>阅读时长</label>
+        <div class="chips" id="durationChips">
+          <span class="chip active" data-dur="3">3 分钟（450 词）</span>
+          <span class="chip" data-dur="5">5 分钟（750 词）</span>
+          <span class="chip" data-dur="10">10 分钟（1500 词）</span>
+          <span class="chip" data-dur="custom">自定义</span>
+        </div>
+        <input id="durationCustom" type="number" min="1" max="30" placeholder="自定义分钟数" class="hidden">
+
+        <label>单词难度</label>
+        <div class="chips" id="targetChips">
+          <span class="chip active" data-target="四级">四级</span>
+          <span class="chip" data-target="六级">六级</span>
+          <span class="chip" data-target="考研">考研</span>
+          <span class="chip" data-target="雅思">雅思</span>
+          <span class="chip" data-target="托福">托福</span>
+        </div>
+
+        <label>文章主题</label>
+        <div class="chips" id="topicChips">
+          <span class="chip" data-topic="K-pop">K-pop</span>
+          <span class="chip" data-topic="影视剧">影视剧</span>
+          <span class="chip" data-topic="娱乐热点">娱乐热点</span>
+        </div>
+        <input id="topicInput" type="text" placeholder="或自由输入任意主题" autocomplete="off">
+      </div>
+      <div class="fixed-bottom">
+        <button id="generateBtn" class="btn btn-primary btn-block">生成文章</button>
+      </div>
+    </section>
+
+    <!-- 页面4：阅读文章 -->
+    <section id="view-article" class="view hidden">
+      <div id="articleToolbar" class="article-toolbar hidden">
+        <button id="translateToggle" class="btn btn-outline btn-sm">全文翻译</button>
+      </div>
+      <div id="articleStatus" class="status hidden"></div>
+      <div id="articleResult" class="article-panel"></div>
+      <div id="articleFooter" class="article-footer hidden">
+        <span>已掌握 <b id="knownCount">0</b></span>
+        <span>不认识 <b id="unknownCount">0</b></span>
+      </div>
+      <div id="articleEndButtons" class="hidden" style="display:flex;gap:10px;margin-top:16px">
+        <button id="goHomeBtn" class="btn btn-outline" style="flex:1">返回首页</button>
+        <button id="goReviewBtn" class="btn btn-primary" style="flex:1">查看错题本</button>
+      </div>
+    </section>
+
+    <!-- 单词语境查询 -->
+    <section id="view-news" class="view hidden">
+      <div class="panel">
+        <label>输入要查询的单词</label>
+        <div id="newsTags" class="chips"></div>
+        <input id="newsWordInput" type="text" placeholder="输入后按回车或逗号添加，可多个" autocomplete="off">
+
+        <label>主题筛选（可选）</label>
+        <div class="chips" id="newsTopicChips">
+          <span class="chip active" data-topic="不限">不限</span>
+          <span class="chip" data-topic="K-pop">K-pop</span>
+          <span class="chip" data-topic="影视剧">影视剧</span>
+          <span class="chip" data-topic="娱乐">娱乐</span>
+          <span class="chip" data-topic="科技">科技</span>
+          <span class="chip" data-topic="体育">体育</span>
+        </div>
+        <input id="newsTopicInput" type="text" placeholder="或自由输入主题" autocomplete="off">
+      </div>
+      <button id="newsSearchBtn" class="btn btn-primary btn-block" style="margin-top:12px">查找</button>
+      <div id="newsStatus" class="status hidden"></div>
+      <div id="newsResults" class="cards"></div>
+    </section>
+
+    <!-- 错题本 -->
+    <section id="view-review" class="view hidden">
+      <h2 class="section-title">错题本</h2>
+      <input id="wrongbookSearch" type="text" placeholder="搜索单词" autocomplete="off" style="margin-bottom:12px">
+      <div id="wrongbookList"></div>
+      <button id="clearWrongbook" class="btn btn-outline btn-block" style="margin-top:16px">清空错题本</button>
+    </section>
+  </main>
+
+  <!-- 释义弹层 -->
+  <div id="wordPopup" class="word-popup hidden">
+    <span class="wp-close" id="wpClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+    <div class="wp-head">
+      <span class="wp-word" id="wpWord"></span>
+      <span class="wp-phonetic" id="wpPhonetic"></span>
+      <span class="wp-speak" id="wpSpeak" title="发音"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span>
+    </div>
+    <div class="wp-row"><span class="k">释义</span><span id="wpMeanings"></span></div>
+    <div class="wp-row"><span class="k">英文释义</span><span id="wpMeaningEn"></span></div>
+    <div class="wp-row"><span class="k">例句</span><span id="wpExample"></span></div>
+    <div class="wp-row"><span class="k">搭配 / 词根 / 近反义</span><span id="wpCollocations"></span></div>
+    <div class="wp-actions hidden" id="wpActions">
+      <button class="btn btn-outline" id="wpKnown" style="flex:1">认识</button>
+      <button class="btn btn-primary" id="wpUnknown" style="flex:1; background:var(--danger)">不认识</button>
+    </div>
+  </div>
+
+  <script src="/static/js/api.js?v=5"></script>
+  <script src="/static/js/news.js?v=5"></script>
+  <script src="/static/js/words.js?v=5"></script>
+  <script src="/static/js/articles.js?v=5"></script>
+  <script src="/static/js/review.js?v=5"></script>
+  <script src="/static/js/app.js?v=5"></script>
+</body>
+</html>

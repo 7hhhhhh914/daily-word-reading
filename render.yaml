@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: daily-word-reading
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: LLM_BASE_URL
+        value: https://dashscope.aliyuncs.com/compatible-mode/v1
+      - key: MODEL_OCR
+        value: qwen3-vl-plus
+      - key: MODEL_ARTICLE
+        value: qwen-plus
+      - key: LLM_API_KEY
+        sync: false          # 部署后在 Render 控制台手动填，不写进仓库
+      - key: PROXY
+        value: ""            # 服务器在墙外，不需要代理
