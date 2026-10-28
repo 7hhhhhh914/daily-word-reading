@@ -21,12 +21,14 @@ function icon(name, size = 16) {
 }
 
 async function api(path, options = {}) {
+  const timeout = options.timeout || 30000;   // 默认 30s，长任务可覆盖
   const opts = { headers: { "Content-Type": "application/json" }, ...options };
+  delete opts.timeout;
   if (opts.body && typeof opts.body !== "string") opts.body = JSON.stringify(opts.body);
   let lastErr = null;
   for (let attempt = 0; attempt <= 2; attempt++) {
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 30000);  // 30 秒超时
+    const timer = setTimeout(() => ctrl.abort(), timeout);  // 可配置超时
     try {
       const resp = await fetch(path, { ...opts, signal: ctrl.signal });
       clearTimeout(timer);

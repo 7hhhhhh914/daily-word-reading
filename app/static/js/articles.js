@@ -69,6 +69,7 @@ async function generateArticle() {
     const data = await api("/api/articles/generate", {
       method: "POST",
       body: { topic: articleState.topic, duration_min: articleState.duration, target: articleState.target, words },
+      timeout: 180000,   // 生成文章较久，给足 3 分钟
     });
     status.classList.add("hidden");
     renderArticle(data);
