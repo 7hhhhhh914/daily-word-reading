@@ -21,7 +21,7 @@ function icon(name, size = 16) {
 }
 
 async function api(path, options = {}) {
-  const timeout = options.timeout || 30000;   // 默认 30s，长任务可覆盖
+  const timeout = options.timeout || 120000;   // 默认 120s，覆盖 Render 冷启动；长任务可覆盖
   const opts = { headers: { "Content-Type": "application/json" }, ...options };
   delete opts.timeout;
   if (opts.body && typeof opts.body !== "string") opts.body = JSON.stringify(opts.body);
